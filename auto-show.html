@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #div1 .content p {
+            display: none;
+        }
+        button{
+        	margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="title"><br><br>
+    <textarea id="content" cols="30" rows="10"></textarea><br><br>
+    <input type="button" id="btn" value="添加"><br><br>
+
+    <div id="div1">
+        <div class="title">
+            <button style="background: yellow">选项一</button>
+            <button>选项二</button>
+        </div>
+        <div class="content">
+            <p style="display: block;">内容一</p>
+            <p>内容二</p>
+        </div>
+    </div>
+
+    <script>
+        var div1 = document.getElementById('div1');
+        var title = document.getElementById('title');
+        var content = document.getElementById('content');
+        var btn = document.getElementById('btn');
+        var tabTitle = div1.querySelector('.title');
+        var tabContent = div1.querySelector('.content');
+        var buttons = tabTitle.getElementsByTagName('button');
+        var contents = tabContent.getElementsByTagName('p');
+        //如果不点击生成下面切换按钮和内容的话，原来的两个按钮也应该可以点击切换
+        for (var i = 0; i < buttons.length; i++) {
+        	buttons[i].index = i;
+        	buttons[i].onclick = function(){
+        		for (var i = 0; i < buttons.length; i++) {
+        			buttons[i].style.backgroundColor = '';
+        			contents[i].style.display = 'none';
+        		}
+        		this.style.backgroundColor = 'yellow';
+        		contents[this.index].style.display = 'block';
+        	}
+        }
+		//点击生成按钮时触发下面的按钮的切换按钮的事件
+        btn.onclick = function(){
+        	if (title.value !='') {
+        		var b = document.createElement('button');
+        		b.innerHTML = title.value;
+        		tabTitle.appendChild(b);
+        		var p = document.createElement('p');
+        		p.innerHTML = content.value;
+        		tabContent.appendChild(p);
+        		//在每个生成的b按钮上都添加一个专属的index属性；刚好设置为动态的buttons.length-1的值 
+        		b.index = buttons.length-1;
+				b.onclick = function(){
+					for (var i = 0; i < buttons.length; i++) {
+						buttons[i].style.backgroundColor = '';
+						contents[i].style.display = 'none';
+					}
+					this.style.backgroundColor = 'yellow';
+					contents[this.index].style.display = 'block';
+				}        		
+        	} 
+        }
+    </script>
+
+</body>
+</html>

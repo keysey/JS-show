@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			#box{
+				width: 350px;
+				height: 350px;
+				border: 1px solid black;
+				position: relative;
+			}
+			#mask{
+				width: 175px;
+				height: 175px;
+				background-color: rgba(255,255,0,0.3);
+				cursor: move;
+				position: absolute;
+				display: none;
+			}
+			#box2{
+				width: 400px;
+				height: 400px;
+				border: 1px solid black;
+				position: absolute;
+				left: 400px;
+				top: 0;
+				overflow: hidden;
+				display: none;
+			}
+			#big{
+				width: 800px;
+				height: 800px;
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+		</style>
+		<script>
+			window.onload = function(){
+				var box = document.getElementById('box');
+				var mask = document.getElementById('mask');
+				var box2 = document.getElementById('box2');
+				var big = document.getElementById('big');
+				box.onmouseover = function(){
+					mask.style.display = box2.style.display = 'block';				
+				}
+				//box的鼠标移动的事件对象
+				box.onmousemove = function(e){
+					//获取box的距离可视区的距离
+					var getBl = box.getBoundingClientRect().left;
+					var getBt = box.getBoundingClientRect().top;
+					//存一下图一的定位值  鼠标距可视区距离-盒子距可视区距离-遮罩层的宽度一半，等于的是让鼠标在遮罩层居中的位置
+					var l =e.clientX-getBl-mask.offsetWidth/2;
+					var t =e.clientY-getBt-mask.offsetHeight/2;
+					//box.offsetLeft获取的是定位父级的left值，没有getB好
+//					var l =e.clientX-box.offsetLeft-mask.offsetWidth/2;
+//					var t =e.clientY-box.offsetTop-mask.offsetHeight/2;
+					//判断遮罩层在box的位置,如果超出设置为边界值
+					if (l<0) {
+						l=0;
+					}else if(l>box.clientWidth-mask.offsetWidth){
+						l=box.clientWidth-mask.offsetWidth
+					}
+					if (t<0) {
+						t=0;
+					}else if(t>box.clientHeight-mask.offsetHeight){
+						t=box.clientHeight-mask.offsetHeight
+					}
+					//遮罩层的显示位置
+					mask.style.left = l+'px';
+					mask.style.top = t+'px';
+					//图片二跟着变化的显示位置，和图一进行位置匹配。（l/遮罩层宽）*box2的宽度
+					big.style.left = -(l/mask.getBoundingClientRect().width)*box2.clientWidth+'px';
+					big.style.top = -(t/mask.getBoundingClientRect().height)*box2.clientHeight+'px';
+				}
+				box.onmouseout = function(){
+					mask.style.display = box2.style.display= '';
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="box">
+			<div id="mask"></div>
+			<img src="../small.jpg" id="small"/>
+		</div>
+		<div id="box2">
+			<img src="../big.jpg" id="big"/>
+		</div>
+	</body>
+</html>

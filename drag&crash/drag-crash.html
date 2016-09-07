@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			#box{
+				width: 100px;
+				height: 100px;
+				background-color: red;
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 2;
+			}
+			#box2{
+				width: 100px;
+				height: 100px;
+				background-color: green;
+				position: absolute;
+				left: 400px;
+				top: 200px;
+				
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box"></div>
+		<div id="box2"></div>
+		<script>
+			var box = document.getElementById('box');
+			var box2 = document.getElementById('box2');
+			//第一种方法
+			//如果文档内有文字存在，document内存在默认行为，导致选中文字拖拽的时候即事件onmousedown的时候文字会移动，但点击目标移动的事件也会受到浏览器默认行为的影响
+			//如果在document内取消默认行为,拖拽选中文字不能用，用户体验不好，所以只需要选择在移动目标的onmousedown事件内取消默认行为就可以了
+			//鼠标移动太快，就会在move的事件间隔时间外脱离box，导致box move事件不能正常触发,所以设置move事件设为document
+//			document.onmousedown = function(){
+//				return false;
+//			}
+			box.onmousedown = function(e){
+				//获取元素数值
+				var box2L = box2.offsetLeft;
+				var box2T = box2.offsetTop;
+				var boxW = this.offsetWidth;
+				var boxH = this.offsetHeight;
+				var box2W = box2.offsetWidth;
+				var box2H = box2.offsetHeight;
+				//鼠标点击处-目标距可视区距离=当前点击目标距边框的距离
+				var boxX = e.clientX - this.offsetLeft;
+				var boxY = e.clientY - this.offsetTop;
+				//鼠标移动事件
+				document.onmousemove = function(e){
+					//l = 鼠标点击处-当前点击目标距边框的距离
+					var l = e.clientX - boxX;
+					var t = e.clientY - boxY;
+					//判断目标运动边界问题：<0或者>可视区宽度（高度）-目标宽度（高度）
+					if (l<0) {
+						l = 0;
+					}
+					if (l>document.documentElement.clientWidth-boxW) {
+						l=document.documentElement.clientWidth-boxW;
+					}
+					if (t<0) {
+						t = 0;
+					}
+					if (t>document.documentElement.clientHeight-boxH) {
+						t=document.documentElement.clientHeight-boxH;
+					}
+//					//吸附效果：判断目标运动边界问题：<100或者>可视区宽度（高度）-目标宽度（高度）
+//					if (l<100) {
+//						l = 0;
+//					}
+//					if (l>document.documentElement.clientWidth-boxW) {
+//						l=document.documentElement.clientWidth-boxW;
+//					}
+//					if (t<100) {
+//						t = 0;
+//					}
+//					if (t>document.documentElement.clientHeight-boxH) {
+//						t=document.documentElement.clientHeight-boxH;
+//					}
+					//判断运动目标距离box2的距离 四个方向
+					if (boxW+l<box2L||l>box2L+box2W||t+boxH<box2T||t>box2H+box2T) {
+						box2.style.backgroundColor = 'green';
+					}else{
+						box2.style.backgroundColor = 'pink';
+					}
+					//运动目标的定位位置
+					box.style.left = l + 'px';
+					box.style.top = t+ 'px';
+				}
+				//鼠标抬起的事件
+				document.onmouseup = function(){
+					document.onmousemove = null;
+				}
+				return false;
+			}
+//			//第二种方法
+//			box.onmousedown = function(){
+//				this.indown = true;
+//			}
+//			box.onmousemove = function(){
+//				if (this.indown) {
+//					console.log(1);
+//				}					
+//			}
+//			box.onmouseup = function(){
+//				this.indown = false;
+//			}
+		</script>
+	</body>
+</html>

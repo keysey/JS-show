@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			#box{
+				width: 100px;
+				height: 100px;
+				background-color: red;
+				position: absolute;
+				left: 400px;
+				top: 300px;
+				z-index: 2;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box"></div>
+		<script>
+			var box = document.getElementById('box');
+
+			box.onmousedown = function(e){
+				//获取元素本身数值
+				var boxW = this.offsetWidth;
+				var boxH = this.offsetHeight;
+				//获取元素离可视区的距离
+				var boxL = this.offsetLeft;
+				var boxT = this.offsetTop;
+				//鼠标点击处距离可视区距离
+				var lastL = e.clientX;
+				var lastT = e.clientY;
+				//鼠标点击处-目标距可视区距离=当前点击目标距边框的距离
+				var boxX = lastL - boxL;
+				var boxY = lastT - boxT;
+				//判断点击位置的状态
+				var statu = '';
+				if (boxX<10) {
+					statu = 'left';
+				}
+				if (boxW+boxL-lastL<10) {
+					statu = 'right';							
+				}
+				if (boxY<10) {
+					statu = 'top';
+				}
+				if (boxH+boxT-lastT<10) {
+					statu = 'bottom';							
+				}
+				switch (statu){
+						case 'right':
+						//鼠标移动事件
+						document.onmousemove = function(e){
+							//目标宽度+（ 鼠标点击处-move前点击目标距可视区的距离	）		
+							box.style.width = boxW+(e.clientX-lastL)+'px';
+						}
+						break;
+						case 'left':
+						//鼠标移动事件
+						document.onmousemove = function(e){
+							//l = 鼠标点击处-（当前点击目标距边框的距离） w = 目标宽度+（ move前点击目标距可视区的距离-鼠标点击处）	
+							box.style.left = e.clientX-(lastL-boxL)+'px';
+							box.style.width = boxW+(lastL-e.clientX)+'px';
+						}	
+						break;
+						case 'top':
+						//鼠标移动事件
+						document.onmousemove = function(e){
+							//t = 鼠标点击处-（当前点击目标距边框的距离） h = 目标高度+（ move前点击目标距可视区的距离-鼠标点击处）	
+							box.style.top = e.clientY-(lastT-boxT)+'px';
+							box.style.height = boxH+(lastT-e.clientY)+'px';							
+						}
+						break;
+						case 'bottom':
+						//鼠标移动事件
+						document.onmousemove = function(e){
+							//目标高度+（ 鼠标点击处-move前点击目标距可视区的距离	）
+							box.style.height = boxH+(e.clientY-lastT)+'px';
+						}	
+						break;
+				}
+				//鼠标抬起的事件
+				document.onmouseup = function(){
+					document.onmousemove = null;
+				}
+				return false;
+			}
+		</script>
+	</body>
+</html>
+
